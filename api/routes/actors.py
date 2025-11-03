@@ -8,7 +8,7 @@ from api.schemas.actor import actor_schema, actors_schema
 
 actors_router = Blueprint('actors', __name__, url_prefix='/actors')
 
-@actors_router.get('/get')
+@actors_router.get('/')
 def read_all_actors():
     page = request.args.get("page", 1, type=int)
     page_size = request.args.get("page_size", 10, type=int)
@@ -31,13 +31,13 @@ def read_all_actors():
         "prev_page": prev_page
     }
 
-@actors_router.get('/<actor_id>/get')
+@actors_router.get('/<actor_id>')
 def read_actor(actor_id):
     actor = Actor.query.get_or_404(actor_id)
     print(actor.films)
     return actor_schema.dump(actor)
 
-@actors_router.post('/create')
+@actors_router.post('/')
 def create_actor():
     actor_data = request.json
 
@@ -52,7 +52,7 @@ def create_actor():
 
     return actor_schema.dump(actor)
 
-@actors_router.put('/<actor_id>/update')
+@actors_router.put('/<actor_id>')
 def update_actor(actor_id):
     actor_data = request.json
     actor = Actor.query.get_or_404(actor_id)
@@ -67,7 +67,7 @@ def update_actor(actor_id):
     db.session.commit()
     return actor_schema.dump(actor)
 
-@actors_router.delete('/<actor_id>/delete')
+@actors_router.delete('/<actor_id>')
 def delete_actor(actor_id):
     actor = Actor.query.get_or_404(actor_id)
     db.session.delete(actor)

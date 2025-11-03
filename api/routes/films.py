@@ -9,7 +9,7 @@ from api.schemas.language import language_schema
 
 films_router = Blueprint('films', __name__, url_prefix='/films')
 
-@films_router.get('/get')
+@films_router.get('/')
 def read_all_films():
     page = request.args.get("page", 1, type=int)
     page_size = request.args.get("page_size", 10, type=int)
@@ -33,12 +33,12 @@ def read_all_films():
         "prev_page": prev_page
     }
 
-@films_router.get('/<film_id>/get')
+@films_router.get('/<film_id>')
 def read_film(film_id):
     film = Film.query.get_or_404(film_id)
     return film_schema.jsonify(film)
 
-@films_router.post('/create')
+@films_router.post('/')
 def create_film():
     film_data = request.json
 
@@ -61,7 +61,7 @@ def create_film():
     
     return film_schema.dump(film)
 
-@films_router.put('/<film_id>/update')
+@films_router.put('/<film_id>')
 def update_film(film_id):
     film_data = request.json
     film = Film.query.get_or_404(film_id)
@@ -78,16 +78,13 @@ def update_film(film_id):
             data = Language.query.get(film_data[fk])
             if data is None:
                 return(f"Invalid {fk}", 400)
-            
-    if film_data["special_features"] == "null":
-        film_data["special_features"] = None
     
     db.session.query(Film).filter_by(film_id=film_id).update(film_data)
 
     db.session.commit()
     return film_schema.dump(film)
 
-@films_router.delete('/<film_id>/delete')
+@films_router.delete('/<film_id>')
 def delete_film(film_id):
     film = Film.query.get_or_404(film_id)
     db.session.delete(film)
