@@ -34,7 +34,6 @@ def read_all_actors():
 @actors_router.get('/<actor_id>')
 def read_actor(actor_id):
     actor = Actor.query.get_or_404(actor_id)
-    print(actor.films)
     return actor_schema.dump(actor)
 
 @actors_router.post('/')

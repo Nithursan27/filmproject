@@ -15,15 +15,20 @@ class FilmSchema(ma.SQLAlchemyAutoSchema):
         include_relationships=True
         load_instance = True
         
+    description = fields.String(allow_none=True)
+    release_year= fields.Integer(allow_none=True)
     language_id = fields.Integer(validate=validate.Range(min=1, max=255), load_only=True)
-    original_language_id = fields.Integer(validate=validate.Range(min=1, max=255))
+    original_language_id = fields.Integer(validate=validate.Range(min=1, max=255), allow_none=True)
     rental_duration = fields.Integer(validate=validate.Range(min=1, max=255))
-    length = fields.Integer(validate=validate.Range(min=1, max=65535))
-    rating= fields.String(validate=validate.OneOf(RATINGS))
+    rental_rate = fields.Float(validate=validate.Range(min=0.0, max=10000.0, max_inclusive=False))
+    length = fields.Integer(validate=validate.Range(min=1, max=65535), allow_none=True)
+    replacement_cost= fields.Float(validate=validate.Range(min=0.0, max=100000.0, max_inclusive=False))
+    rating= fields.String(validate=validate.OneOf(RATINGS), required=True)
     language = fields.Nested(LanguageSchema)
     
     @validates('special_features')
     def validate_special_features(self, value, **kwargs):
+        if value:
             for feature in value.split(","):
                 if feature not in SPECIAL_FEATURES:
                     raise ValidationError("Invalid special feature in list. Please ensure there are no spaces between commas separating values")
