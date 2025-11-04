@@ -8,6 +8,10 @@ from api.schemas.actor import actor_schema, actors_schema
 
 actors_router = Blueprint('actors', __name__, url_prefix='/actors')
 
+def add_film_link(actor):
+    for film in actor["films"]:
+        film["ref"] = url_for('api.films.read_film', film_id = film["film_id"], _external=True)
+
 @actors_router.get('/')
 def read_all_actors():
     page = request.args.get("page", 1, type=int)
@@ -25,8 +29,14 @@ def read_all_actors():
             actors = Actor.query.paginate(page=page, per_page=page_size)
             next_page = url_for('.read_all_actors', page=actors.next_num, page_size=page_size, _external=True) if actors.has_next else None
             prev_page = url_for('.read_all_actors', page=actors.prev_num, page_size=page_size, _external=True) if actors.has_prev else None
+            
+    actors_response = actors_schema.dump(actors)
+    
+    for actor in actors_response:
+        add_film_link(actor)
+    
     return {
-        "results": actors_schema.dump(actors),
+        "results": actors_response,
         "next_page": next_page,
         "prev_page": prev_page
     }
@@ -34,7 +44,11 @@ def read_all_actors():
 @actors_router.get('/<actor_id>')
 def read_actor(actor_id):
     actor = Actor.query.get_or_404(actor_id)
-    return actor_schema.dump(actor)
+    
+    actor_response = actor_schema.dump(actor)
+    add_film_link(actor_response)
+    
+    return actor_response
 
 @actors_router.post('/')
 def create_actor():
