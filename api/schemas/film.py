@@ -15,14 +15,14 @@ class FilmSchema(ma.SQLAlchemyAutoSchema):
         include_relationships=True
         load_instance = True
         
-    description = fields.String(allow_none=True)
-    release_year= fields.Integer(allow_none=True)
-    language_id = fields.Integer(validate=validate.Range(min=1, max=255), load_only=True)
-    original_language_id = fields.Integer(validate=validate.Range(min=1, max=255), allow_none=True)
-    rental_duration = fields.Integer(validate=validate.Range(min=1, max=255))
-    rental_rate = fields.Float(validate=validate.Range(min=0.0, max=10000.0, max_inclusive=False))
-    length = fields.Integer(validate=validate.Range(min=1, max=65535), allow_none=True)
-    replacement_cost= fields.Float(validate=validate.Range(min=0.0, max=100000.0, max_inclusive=False))
+    description = fields.String(allow_none=True, required=True)
+    release_year= fields.Integer(allow_none=True, required=True)
+    language_id = fields.Integer(validate=validate.Range(min=1, max=255), load_only=True, required=True)
+    original_language_id = fields.Integer(validate=validate.Range(min=1, max=255), allow_none=True, required=True)
+    rental_duration = fields.Integer(validate=validate.Range(min=1, max=255), required=True)
+    rental_rate = fields.Float(validate=validate.Range(min=0.0, max=10000.0, max_inclusive=False), required=True)
+    length = fields.Integer(validate=validate.Range(min=1, max=65535), allow_none=True, required=True)
+    replacement_cost= fields.Float(validate=validate.Range(min=0.0, max=100000.0, max_inclusive=False), required=True)
     rating= fields.String(validate=validate.OneOf(RATINGS), required=True)
     language = fields.Nested(LanguageSchema)
     
