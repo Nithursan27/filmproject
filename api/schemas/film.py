@@ -24,13 +24,9 @@ class FilmSchema(ma.SQLAlchemyAutoSchema):
     
     @validates('special_features')
     def validate_special_features(self, value, **kwargs):
-        if value is not None:
-            if value == "null":
-                value = None
-            else:
-                for feature in value.split(","):
-                    if feature not in SPECIAL_FEATURES:
-                        raise ValidationError("Invalid special feature in list. Please ensure there are no spaces between commas separating values")
+            for feature in value.split(","):
+                if feature not in SPECIAL_FEATURES:
+                    raise ValidationError("Invalid special feature in list. Please ensure there are no spaces between commas separating values")
     
 film_schema = FilmSchema()
 films_schema = FilmSchema(many=True)
