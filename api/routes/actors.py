@@ -21,15 +21,13 @@ def read_all_actors():
     next_page = None
     prev_page = None
     
-    if not any(request.args.values()):
-        actors = Actor.query.all()
+    if name:
+        actors = Actor.query.filter(or_(Actor.first_name.startswith(name), Actor.last_name.startswith(name))).paginate(page=page, per_page=page_size)
     else:
-        if name is not None:
-            actors = Actor.query.filter(or_(Actor.first_name.startswith(name), Actor.last_name.startswith(name)))
-        else:
-            actors = Actor.query.paginate(page=page, per_page=page_size)
-            next_page = url_for('.read_all_actors', page=actors.next_num, page_size=page_size, _external=True) if actors.has_next else None
-            prev_page = url_for('.read_all_actors', page=actors.prev_num, page_size=page_size, _external=True) if actors.has_prev else None
+        actors = Actor.query.paginate(page=page, per_page=page_size)
+        
+    next_page = url_for('.read_all_actors', page=actors.next_num, page_size=page_size, _external=True) if actors.has_next else None
+    prev_page = url_for('.read_all_actors', page=actors.prev_num, page_size=page_size, _external=True) if actors.has_prev else None
             
     actors_response = actors_schema.dump(actors)
     
