@@ -7,3 +7,9 @@ film_actor_table = db.Table(
     db.Column("actor_id", ForeignKey("actor.actor_id"), primary_key=True),
     db.Column("film_id", ForeignKey("film.film_id"), primary_key=True),
 )
+
+film_category_table = db.Table(
+    "film_category",
+    db.Column("film_id", ForeignKey("film.film_id"), primary_key=True),
+    db.Column("category_id", ForeignKey("category.category_id"), primary_key=True)
+)
