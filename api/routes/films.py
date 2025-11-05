@@ -3,6 +3,8 @@ from marshmallow import ValidationError
 
 from api.models import db
 from api.models.film import Film
+from api.models.category import Category
+from api.models.associations import film_category_table
 from api.models.language import Language
 from api.schemas.film import film_schema, films_schema
 from api.schemas.language import language_schema
@@ -17,7 +19,6 @@ def add_actor_link(film):
 def read_all_films():
     page = request.args.get("page", 1, type=int)
     page_size = request.args.get("page_size", 10, type=int)
-    title = request.args.get("title", type=str)
     category = request.args.get("category", type=int)
     
     # filter_data = {'title': title, 'category': category}
@@ -31,8 +32,8 @@ def read_all_films():
     if not any(request.args.values()):
         films = Film.query.all()   
     else:
-        if title is not None:
-            films = Film.query.filter(Film.title.startswith(title))
+        if category is not None:
+            films = Film.query.join(film_category_table).join(Category).filter(film_category_table.c.category_id == category).all()
         else:
             films = Film.query.paginate(page=page, per_page=page_size)
             next_page = url_for('.read_all_films', page=films.next_num, page_size=page_size, _external=True) if films.has_next else None
