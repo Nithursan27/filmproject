@@ -33,7 +33,7 @@ def read_all_films():
         films = Film.query.all()   
     else:
         if category is not None:
-            films = Film.query.join(film_category_table).join(Category).filter(film_category_table.c.category_id == category).all()
+            films = Film.query.join(film_category_table).filter(film_category_table.c.category_id == category).all()
         else:
             films = Film.query.paginate(page=page, per_page=page_size)
             next_page = url_for('.read_all_films', page=films.next_num, page_size=page_size, _external=True) if films.has_next else None
