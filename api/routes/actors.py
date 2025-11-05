@@ -107,9 +107,9 @@ def update_actor_films(actor_id):
     if film_data is None:
         film_data = []
     for film in film_data:
-        data = Film.query.get(film["film_id"])
+        data = Film.query.get(film.get("film_id"))
         if data is None:
-            return(f"Incorrect film_id", 400)
+            return(f"Invalid input data", 400)
         new_films.append(data)
         
     actor.films = new_films

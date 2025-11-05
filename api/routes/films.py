@@ -136,9 +136,9 @@ def update_film_actors(film_id):
     if actor_data is None:
         actor_data = []
     for actor in actor_data:
-        data = Actor.query.get(actor["actor_id"])
+        data = Actor.query.get(actor.get("actor_id", None))
         if data is None:
-            return(f"Incorrect actor_id", 400)
+            return(f"Invalid input data", 400)
         new_actors.append(data)
         
     film.actors = new_actors
@@ -152,7 +152,32 @@ def update_film_actors(film_id):
     return film_response["actors"]
 
 @films_router.get('/<film_id>/categories')
-def get_film_category(film_id):
+def get_film_categories(film_id):
     film = Film.query.get_or_404(film_id)
     
     return film_schema.dump(film)["categories"]
+
+@films_router.put('/<film_id>/categories')
+def update_film_categories(film_id):
+    categories_data = request.json
+    
+    film = Film.query.get_or_404(film_id)
+    new_categories = []
+    if categories_data is None:
+        categories_data = []
+    for category in categories_data:
+        data = Category.query.get(category.get("category_id", None))
+        if data is None:
+            return(f"Invalid input data", 400)
+        new_categories.append(data)
+        
+    film.categories = new_categories
+    
+    db.session.add(film)
+    db.session.commit()
+    
+    film_response = film_schema.dump(film)
+    add_actor_link(film_response)
+    
+    return film_response["categories"]
+        
