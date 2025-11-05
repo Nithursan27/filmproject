@@ -11,6 +11,7 @@ actors_router = Blueprint('actors', __name__, url_prefix='/actors')
 def add_film_link(actor):
     for film in actor["films"]:
         film["ref"] = url_for('api.films.read_film', film_id = film["film_id"], _external=True)
+        
 
 @actors_router.get('/')
 def read_all_actors():

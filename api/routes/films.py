@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, url_for
 from marshmallow import ValidationError
 
+from sqlalchemy import and_
 from api.models import db
 from api.models.film import Film
 from api.models.category import Category
@@ -20,24 +21,27 @@ def read_all_films():
     page = request.args.get("page", 1, type=int)
     page_size = request.args.get("page_size", 10, type=int)
     category = request.args.get("category", type=int)
+    language = request.args.get("language", type=int)
     
-    # filter_data = {'title': title, 'category': category}
+    # filter_data = {'language': language, 'category': category}
     # filter_data = {key: value for (key,value) in filter_data.items() if value}
     
     # films = Film.query.filter_by(**filter_data)
 
     next_page = None
     prev_page = None
-
-    if not any(request.args.values()):
-        films = Film.query.all()   
-    else:
-        if category is not None:
-            films = Film.query.join(film_category_table).filter(film_category_table.c.category_id == category).all()
-        else:
-            films = Film.query.paginate(page=page, per_page=page_size)
-            next_page = url_for('.read_all_films', page=films.next_num, page_size=page_size, _external=True) if films.has_next else None
-            prev_page = url_for('.read_all_films', page=films.prev_num, page_size=page_size, _external=True) if films.has_prev else None
+    
+    if category and language:
+        films = Film.query.join(film_category_table).filter(and_((film_category_table.c.category_id == category), Film.language_id==language)).paginate(page=page, per_page=page_size)
+    elif category:
+        films = Film.query.join(film_category_table).filter(film_category_table.c.category_id == category).paginate(page=page, per_page=page_size)
+    elif language:
+        films = Film.query.filter(Film.language_id==language).paginate(page=page, per_page=page_size)
+    else: 
+        films = Film.query.paginate(page=page, per_page=page_size)
+        
+    next_page = url_for('.read_all_films', page=films.next_num, page_size=page_size, _external=True) if films.has_next else None
+    prev_page = url_for('.read_all_films', page=films.prev_num, page_size=page_size, _external=True) if films.has_prev else None
             
     films_response = films_schema.dump(films)
     
