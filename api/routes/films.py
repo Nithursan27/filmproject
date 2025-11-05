@@ -17,15 +17,22 @@ def add_actor_link(film):
 def read_all_films():
     page = request.args.get("page", 1, type=int)
     page_size = request.args.get("page_size", 10, type=int)
-    name = request.args.get("name", type=str)
+    title = request.args.get("title", type=str)
+    category = request.args.get("category", type=int)
+    
+    # filter_data = {'title': title, 'category': category}
+    # filter_data = {key: value for (key,value) in filter_data.items() if value}
+    
+    # films = Film.query.filter_by(**filter_data)
+
     next_page = None
     prev_page = None
-    
+
     if not any(request.args.values()):
         films = Film.query.all()   
     else:
-        if name is not None:
-            films = Film.query.filter(Film.title.startswith(name))
+        if title is not None:
+            films = Film.query.filter(Film.title.startswith(title))
         else:
             films = Film.query.paginate(page=page, per_page=page_size)
             next_page = url_for('.read_all_films', page=films.next_num, page_size=page_size, _external=True) if films.has_next else None

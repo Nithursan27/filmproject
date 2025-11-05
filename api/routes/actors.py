@@ -3,7 +3,7 @@ from marshmallow import ValidationError
 from sqlalchemy import or_
 
 from api.models import db
-from api.models.actor import Actor
+from api.models.actor import Actor, Film
 from api.schemas.actor import actor_schema, actors_schema
 
 actors_router = Blueprint('actors', __name__, url_prefix='/actors')
@@ -44,6 +44,38 @@ def read_all_actors():
 @actors_router.get('/<actor_id>')
 def read_actor(actor_id):
     actor = Actor.query.get_or_404(actor_id)
+    
+    actor_response = actor_schema.dump(actor)
+    add_film_link(actor_response)
+    
+    return actor_response
+
+@actors_router.get('/<actor_id>/films')
+def read_actor_films(actor_id):
+    actor = Actor.query.get_or_404(actor_id)
+    
+    actor_response = actor_schema.dump(actor)
+    add_film_link(actor_response)
+    
+    return actor_response["films"]
+
+@actors_router.put('/<actor_id>/films')
+def update_actor_films(actor_id):
+    film_data = request.json
+    
+    actor = Actor.query.get_or_404(actor_id)
+    new_films = []
+    
+    for film in film_data:
+        data = Film.query.get(film["film_id"])
+        if data is None:
+            return(f"Incorrect film_id", 400)
+        new_films.append(data)
+        
+    actor.films = new_films
+    
+    db.session.add(actor)
+    db.session.commit()
     
     actor_response = actor_schema.dump(actor)
     add_film_link(actor_response)
