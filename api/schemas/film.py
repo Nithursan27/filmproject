@@ -1,7 +1,7 @@
 from api.models.film import Film
 from api.models.language import Language
 from api.schemas.language import LanguageSchema
-from api.schemas.category import categorys_schema
+from api.schemas.category import categories_schema
 from api.schemas import ma
 from marshmallow import ValidationError, fields, validate, validates
 from marshmallow_sqlalchemy import auto_field
@@ -28,7 +28,7 @@ class FilmSchema(ma.SQLAlchemyAutoSchema):
     
     language = fields.Nested(LanguageSchema)
     actors = fields.Nested("ActorSchema", many=True, only=("actor_id", "first_name", "last_name"), dump_only=True)
-    categories = fields.Nested(categorys_schema, dump_only=True)
+    categories = fields.Nested(categories_schema, dump_only=True)
     
     @validates('special_features')
     def validate_special_features(self, value, **kwargs):

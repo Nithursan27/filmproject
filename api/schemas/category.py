@@ -7,4 +7,4 @@ class CategorySchema(ma.SQLAlchemyAutoSchema):
         model = Category
 
 category_schema = CategorySchema()
-categorys_schema = CategorySchema(many=True)
+categories_schema = CategorySchema(many=True)

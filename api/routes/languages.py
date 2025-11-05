@@ -32,6 +32,21 @@ def create_language():
 
     return language_schema.dump(language)
 
+@languages_router.put('/<language_id>')
+def update_language(language_id):
+    language_data = request.json
+    language = Language.query.get_or_404(language_id)
+    
+    try:
+        language_schema.load(language_data)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+    
+    db.session.query(Language).filter_by(language_id=language_id).update(language_data)
+
+    db.session.commit()
+    return language_schema.dump(language)
+
 @languages_router.delete('/<language_id>')
 def delete_language(language_id):
     language = Language.query.get_or_404(language_id)
