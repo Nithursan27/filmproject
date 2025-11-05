@@ -4,6 +4,7 @@ from marshmallow import ValidationError
 from sqlalchemy import and_
 from api.models import db
 from api.models.film import Film
+from api.models.actor import Actor
 from api.models.category import Category
 from api.models.associations import film_category_table
 from api.models.language import Language
@@ -116,3 +117,42 @@ def delete_film(film_id):
     db.session.commit()
 
     return ("", 204)
+
+@films_router.get('/<film_id>/actors')
+def read_film_actors(film_id):
+    film = Film.query.get_or_404(film_id)
+    
+    film_response = film_schema.dump(film)
+    add_actor_link(film_response)
+    
+    return film_response["actors"]
+
+@films_router.put('/<film_id>/actors')
+def update_film_actors(film_id):
+    actor_data = request.json
+    
+    film = Film.query.get_or_404(film_id)
+    new_actors = []
+    if actor_data is None:
+        actor_data = []
+    for actor in actor_data:
+        data = Actor.query.get(actor["actor_id"])
+        if data is None:
+            return(f"Incorrect actor_id", 400)
+        new_actors.append(data)
+        
+    film.actors = new_actors
+    
+    db.session.add(film)
+    db.session.commit()
+    
+    film_response = film_schema.dump(film)
+    add_actor_link(film_response)
+    
+    return film_response["actors"]
+
+@films_router.get('/<film_id>/categories')
+def get_film_category(film_id):
+    film = Film.query.get_or_404(film_id)
+    
+    return film_schema.dump(film)["categories"]

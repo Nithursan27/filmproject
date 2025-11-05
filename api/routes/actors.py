@@ -51,38 +51,6 @@ def read_actor(actor_id):
     
     return actor_response
 
-@actors_router.get('/<actor_id>/films')
-def read_actor_films(actor_id):
-    actor = Actor.query.get_or_404(actor_id)
-    
-    actor_response = actor_schema.dump(actor)
-    add_film_link(actor_response)
-    
-    return actor_response["films"]
-
-@actors_router.put('/<actor_id>/films')
-def update_actor_films(actor_id):
-    film_data = request.json
-    
-    actor = Actor.query.get_or_404(actor_id)
-    new_films = []
-    
-    for film in film_data:
-        data = Film.query.get(film["film_id"])
-        if data is None:
-            return(f"Incorrect film_id", 400)
-        new_films.append(data)
-        
-    actor.films = new_films
-    
-    db.session.add(actor)
-    db.session.commit()
-    
-    actor_response = actor_schema.dump(actor)
-    add_film_link(actor_response)
-    
-    return actor_response
-
 @actors_router.post('/')
 def create_actor():
     actor_data = request.json
@@ -120,3 +88,36 @@ def delete_actor(actor_id):
     db.session.commit()
 
     return ("", 204)
+
+@actors_router.get('/<actor_id>/films')
+def read_actor_films(actor_id):
+    actor = Actor.query.get_or_404(actor_id)
+    
+    actor_response = actor_schema.dump(actor)
+    add_film_link(actor_response)
+    
+    return actor_response["films"]
+
+@actors_router.put('/<actor_id>/films')
+def update_actor_films(actor_id):
+    film_data = request.json
+    
+    actor = Actor.query.get_or_404(actor_id)
+    new_films = []
+    if film_data is None:
+        film_data = []
+    for film in film_data:
+        data = Film.query.get(film["film_id"])
+        if data is None:
+            return(f"Incorrect film_id", 400)
+        new_films.append(data)
+        
+    actor.films = new_films
+    
+    db.session.add(actor)
+    db.session.commit()
+    
+    actor_response = actor_schema.dump(actor)
+    add_film_link(actor_response)
+    
+    return actor_response["films"]
