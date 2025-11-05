@@ -9,6 +9,10 @@ from api.schemas.language import language_schema
 
 films_router = Blueprint('films', __name__, url_prefix='/films')
 
+def add_actor_link(film):
+    for actor in film["actors"]:
+        actor["ref"] = url_for('api.actors.read_actor', actor_id = actor["actor_id"], _external=True)
+
 @films_router.get('/')
 def read_all_films():
     page = request.args.get("page", 1, type=int)
@@ -27,8 +31,13 @@ def read_all_films():
             next_page = url_for('.read_all_films', page=films.next_num, page_size=page_size, _external=True) if films.has_next else None
             prev_page = url_for('.read_all_films', page=films.prev_num, page_size=page_size, _external=True) if films.has_prev else None
             
+    films_response = films_schema.dump(films)
+    
+    for film in films_response:
+        add_actor_link(film)
+            
     return {
-        "results": films_schema.dump(films),
+        "results": films_response,
         "next_page": next_page,
         "prev_page": prev_page
     }
@@ -36,7 +45,11 @@ def read_all_films():
 @films_router.get('/<film_id>')
 def read_film(film_id):
     film = Film.query.get_or_404(film_id)
-    return film_schema.jsonify(film)
+    
+    film_response = film_schema.dump(film)
+    add_actor_link(film_response)
+    
+    return film_response
 
 @films_router.post('/')
 def create_film():
@@ -61,7 +74,7 @@ def create_film():
     
     return film_schema.dump(film)
 
-@films_router.put('/<film_id>')
+@films_router.patch('/<film_id>')
 def update_film(film_id):
     film_data = request.json
     film = Film.query.get_or_404(film_id)
