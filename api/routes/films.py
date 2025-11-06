@@ -23,23 +23,18 @@ def read_all_films():
     page_size = request.args.get("page_size", 10, type=int)
     category = request.args.get("category", type=int)
     language = request.args.get("language", type=int)
-    
-    # filter_data = {'language': language, 'category': category}
-    # filter_data = {key: value for (key,value) in filter_data.items() if value}
-    
-    # films = Film.query.filter_by(**filter_data)
 
     next_page = None
     prev_page = None
-    
+    films = Film.query
     if category and language:
-        films = Film.query.join(film_category_table).filter(and_((film_category_table.c.category_id == category), Film.language_id==language)).paginate(page=page, per_page=page_size)
+        films = films.join(film_category_table).filter(and_((film_category_table.c.category_id == category), Film.language_id==language))
     elif category:
-        films = Film.query.join(film_category_table).filter(film_category_table.c.category_id == category).paginate(page=page, per_page=page_size)
+        films = films.join(film_category_table).filter(film_category_table.c.category_id == category)
     elif language:
-        films = Film.query.filter(Film.language_id==language).paginate(page=page, per_page=page_size)
-    else: 
-        films = Film.query.paginate(page=page, per_page=page_size)
+        films = films.filter(Film.language_id==language)
+        
+    films = films.paginate(page=page, per_page=page_size)
         
     next_page = url_for('.read_all_films', page=films.next_num, page_size=page_size, _external=True) if films.has_next else None
     prev_page = url_for('.read_all_films', page=films.prev_num, page_size=page_size, _external=True) if films.has_prev else None
