@@ -1,6 +1,7 @@
 from api.models.film import Film
 from api.models.language import Language
 from api.schemas.language import LanguageSchema
+from api.schemas.category import categories_schema
 from api.schemas import ma
 from marshmallow import ValidationError, fields, validate, validates
 from marshmallow_sqlalchemy import auto_field
@@ -15,22 +16,26 @@ class FilmSchema(ma.SQLAlchemyAutoSchema):
         include_relationships=True
         load_instance = True
         
-    language_id = fields.Integer(validate=validate.Range(min=1, max=255), load_only=True)
-    original_language_id = fields.Integer(validate=validate.Range(min=1, max=255))
+    description = fields.String(allow_none=True)
+    release_year= fields.Integer(allow_none=True)
+    language_id = fields.Integer(validate=validate.Range(min=1, max=255), load_only=True, required=True)
+    original_language_id = fields.Integer(validate=validate.Range(min=1, max=255), allow_none=True)
     rental_duration = fields.Integer(validate=validate.Range(min=1, max=255))
-    length = fields.Integer(validate=validate.Range(min=1, max=65535))
-    rating= fields.String(validate=validate.OneOf(RATINGS))
+    rental_rate = fields.Decimal(places=2, validate=validate.Range(min=0.0, max=99.99, max_inclusive=True))
+    length = fields.Integer(validate=validate.Range(min=1, max=65535), allow_none=True)
+    replacement_cost= fields.Decimal(places=2, validate=validate.Range(min=0.0, max=999.99, max_inclusive=True))
+    rating = fields.String(validate=validate.OneOf(RATINGS))
+    
     language = fields.Nested(LanguageSchema)
+    actors = fields.Nested("ActorSchema", many=True, only=("actor_id", "first_name", "last_name"), dump_only=True)
+    categories = fields.Nested(categories_schema, dump_only=True)
     
     @validates('special_features')
     def validate_special_features(self, value, **kwargs):
-        if value is not None:
-            if value == "null":
-                value = None
-            else:
-                for feature in value.split(","):
-                    if feature not in SPECIAL_FEATURES:
-                        raise ValidationError("Invalid special feature in list. Please ensure there are no spaces between commas separating values")
+        if value:
+            for feature in value.split(","):
+                if feature not in SPECIAL_FEATURES:
+                    raise ValidationError("Invalid special feature in list. Please ensure there are no spaces between commas separating values")
     
 film_schema = FilmSchema()
 films_schema = FilmSchema(many=True)

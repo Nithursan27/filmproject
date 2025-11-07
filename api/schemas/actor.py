@@ -10,7 +10,7 @@ class ActorSchema(ma.SQLAlchemyAutoSchema):
         model = Actor
         include_relationships=True
         
-    films = fields.Nested(films_schema, only=("film_id", "title"))
+    films = fields.Nested(films_schema, only=("film_id", "title"), dump_only=True)
 
 actor_schema = ActorSchema()
 actors_schema = ActorSchema(many=True)
