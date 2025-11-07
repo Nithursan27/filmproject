@@ -20,7 +20,7 @@ def add_actor_link(film):
 @films_router.get('/')
 def read_all_films():
     page = request.args.get("page", 1, type=int)
-    page_size = request.args.get("page_size", 20, type=int)
+    page_size = request.args.get("page_size", 10, type=int)
     category = request.args.get("category", type=int)
     language = request.args.get("language", type=int)
 
