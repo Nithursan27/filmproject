@@ -1,6 +1,13 @@
 pipeline {
     agent any
     stages {
+        stage('Scan') {
+            steps {
+                withSonarQubeEnv(installationName: 'NM-SonarQube') {
+                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:7.3.0.5189:sonar'
+                }
+            }
+        }
         stage('SSH') {
             steps{
                 script{
