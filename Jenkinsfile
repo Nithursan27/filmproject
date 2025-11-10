@@ -8,6 +8,7 @@ pipeline {
                 }
                 withSonarQubeEnv(installationName: 'NM-SonarQube') {
                     sh '${scannerHome}/bin/sonar-scanner'
+                    sh 'ls -la'
                 }
             }
         }
