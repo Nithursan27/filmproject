@@ -3,8 +3,11 @@ pipeline {
     stages {
         stage('Scan') {
             steps {
+                script {
+                    scannerHome = tool '<sonarscanner>'
+                }
                 withSonarQubeEnv(installationName: 'NM-SonarQube') {
-                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:7.3.0.5189:sonar'
+                    sh '${scannerHome}/bin/sonar-scanner'
                 }
             }
         }
