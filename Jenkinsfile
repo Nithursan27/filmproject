@@ -11,11 +11,9 @@ pipeline {
                         remote.user = 'nmuraleetharan'
                         remote.identityFile = identity
                         remote.allowAnyHosts = true
-                        
-                        
-                        // sshCommand remote: remote, command: 'ps aux | grep gunicorn > gunicorn_bg_instances'
 
-                        // writeFile file: 'kill_bg_gunicorn.sh', text: 'if grep -q "daemon" gunicorn_bg_instances
+                        // writeFile file: 'kill_bg_gunicorn.sh', text: 'ps aux | grep gunicorn > gunicorn_bg_instances
+                        // if grep -q "daemon" gunicorn_bg_instances
                         // then
                         // pkill gunicorn;
                         // echo "FOUND";
