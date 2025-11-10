@@ -9,11 +9,7 @@ pipeline {
                 withSonarQubeEnv(installationName: 'NM-SonarQube') {
                     sh "ls -lR ${scannerHome}"
                     sh "cat ${scannerHome}/conf/sonar-scanner.properties"
-                    sh "${scannerHome}/bin/sonar-scanner \
-                         -Dsonar.organisation=nithursan27 \
-                         -Dsonar.projectName=filmproject \
-                         -Dsonar.analysis.mode=publish \
-                         -Dsonar.sources=api"
+                    sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
         }
