@@ -7,7 +7,7 @@ pipeline {
                     scannerHome = tool 'sonarqube-scanner'
                 }
                 withSonarQubeEnv(installationName: 'NM-SonarQube') {
-                    sh "ls -la ${scannerHome}/bin"
+                    sh "ls -la ${scannerHome}/bin/sonar-scanner"
                     sh '''${scannerHome}/bin/sonar-scanner \
                          -Dsonar.projectKey=nithursan27 \
                          -Dsonar.projectName=filmproject \
