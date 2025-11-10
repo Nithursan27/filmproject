@@ -13,7 +13,7 @@ pipeline {
                         remote.allowAnyHosts = true
                         
                         
-                        sshCommand remote: remote, command: 'ps aux | grep gunicorn > gunicorn_bg_instances'
+                        // sshCommand remote: remote, command: 'ps aux | grep gunicorn > gunicorn_bg_instances'
 
                         // writeFile file: 'kill_bg_gunicorn.sh', text: 'if grep -q "daemon" gunicorn_bg_instances
                         // then
