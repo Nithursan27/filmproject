@@ -7,7 +7,7 @@ from marshmallow import ValidationError, fields, validate, validates
 from marshmallow_sqlalchemy import auto_field
 
 RATINGS = ["G", "PG", "PG-13", "R", "NC-17"]
-SPECIAL_FEATURES = set(["Trailers", "Commentaries", "Deleted Scenes", "Behind the Scenes"])
+SPECIAL_FEATURES = set("Trailers", "Commentaries", "Deleted Scenes", "Behind the Scenes")
     
 class FilmSchema(ma.SQLAlchemyAutoSchema):
 

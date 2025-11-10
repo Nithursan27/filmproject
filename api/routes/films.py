@@ -133,7 +133,7 @@ def update_film_actors(film_id):
     for actor in actor_data:
         data = Actor.query.get(actor.get("actor_id", None))
         if data is None:
-            return(f"Invalid input data", 400)
+            return("Invalid input data", 400)
         new_actors.append(data)
         
     film.actors = new_actors
@@ -163,7 +163,7 @@ def update_film_categories(film_id):
     for category in categories_data:
         data = Category.query.get(category.get("category_id", None))
         if data is None:
-            return(f"Invalid input data", 400)
+            return("Invalid input data", 400)
         new_categories.append(data)
         
     film.categories = new_categories
