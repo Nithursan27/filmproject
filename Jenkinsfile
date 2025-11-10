@@ -26,7 +26,7 @@ pipeline {
                         // sshCommand remote: remote, command: 'chmod +x kill_bg_gunicorn.sh'
 
                         // sshCommand remote: remote, command: './kill_bg_gunicorn.sh'
-                        sshCommand remote: remote, command: 'pkill gunicorn || cd ~/filmproject && source venv/bin/activate && git pull && gunicorn -b 0.0.0.0 "app:create_app()" --daemon'
+                        sshCommand remote: remote, command: 'pkill gunicorn || cd ~/filmproject && source venv/bin/activate && git pull && pip install -r requirements.txt && gunicorn -b 0.0.0.0 "app:create_app()" --daemon'
                     }
                 }
             }
