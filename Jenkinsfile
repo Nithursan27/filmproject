@@ -13,7 +13,7 @@ pipeline {
                         remote.allowAnyHosts = true
 
                         writeFile file: 'deploy.sh', text: '''\
-                        pkill gunicorn
+                        pkill gunicorn 2> /dev/null
                         cd ~/filmproject
                         source venv/bin/activate 
                         git pull
