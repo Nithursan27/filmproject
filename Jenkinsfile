@@ -13,10 +13,9 @@ pipeline {
                         remote.allowAnyHosts = true
 
                         writeFile file: 'deploy.sh', text: '''\
-                        pkill gunicorn 2> /dev/null
+                        pkill gunicorn
                         cd ~/filmproject
                         source venv/bin/activate
-                        ls -la 
                         git pull
                         pip install -r requirements.txt
                         gunicorn -b 0.0.0.0 "app:create_app()" --daemon'''
