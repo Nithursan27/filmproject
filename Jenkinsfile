@@ -3,6 +3,7 @@ pipeline {
     stages {
         stage('Scan') {
             steps {
+                sh "ls -la"
                 script {
                     scannerHome = tool 'sonarqube-scanner'
                 }
@@ -11,6 +12,7 @@ pipeline {
                     sh '''${scannerHome}/bin/sonar-scanner \
                          -Dsonar.projectKey=nithursan27 \
                          -Dsonar.projectName=filmproject \
+                         -Dsonar.analysis.mode=publish \
                          -Dsonar.sources=api'''
                 }
             }
