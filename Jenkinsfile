@@ -15,15 +15,16 @@ pipeline {
                         writeFile file: 'deploy.sh', text: '''\
                         pkill gunicorn 2> /dev/null
                         cd ~/filmproject
-                        source venv/bin/activate 
+                        source venv/bin/activate
+                        ls -la 
                         git pull
+                        pip install -r requirements.txt
                         gunicorn -b 0.0.0.0 "app:create_app()" --daemon'''
 
                         sshPut remote: remote, from: 'deploy.sh', into: '.'
                         sshCommand remote: remote, command: 'chmod +x deploy.sh'
 
                         sshCommand remote: remote, command: './deploy.sh'
-                        // sshCommand remote: remote, command: 'pkill gunicorn || cd ~/filmproject && source venv/bin/activate && git pull && pip install -r requirements.txt && gunicorn -b 0.0.0.0 "app:create_app()" --daemon'
                     }
                 }
             }
