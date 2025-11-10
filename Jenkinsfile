@@ -7,8 +7,6 @@ pipeline {
                     scannerHome = tool 'sonarqube-scanner'
                 }
                 withSonarQubeEnv(installationName: 'NM-SonarQube') {
-                    sh "ls -lR ${scannerHome}"
-                    sh "cat ${scannerHome}/conf/sonar-scanner.properties"
                     sh "${scannerHome}/bin/sonar-scanner \
                          -Dsonar.organization=nithursan27 \
                          -Dsonar.projectKey=filmproject \
