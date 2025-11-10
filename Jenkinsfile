@@ -14,11 +14,20 @@ pipeline {
                         
                         
                         sshCommand remote: remote, command: 'ps aux | grep gunicorn > gunicorn_bg_instances'
+
+                        writeFile file: 'kill_bg_gunicorn.sh', text: 'if grep -q "daemon" gunicorn_bg_instances
+                                                                      then
+                                                                        pkill gunicorn;
+                                                                        echo "FOUND";
+                                                                      else
+                                                                        echo "NOT FOUND";
+                                                                      fi'
+
+                        sshPut remote: remote, from: 'kill_bg_gunicorn.sh', into: '.'
+                        sshCommand remote: remote, command: 'chmod +777 kill_bg_gunicorn.ssh'
+
                         sshCommand remote: remote, command: './kill_bg_gunicorn.sh'
                         sshCommand remote: remote, command: 'cd ~/filmproject && source venv/bin/activate && git pull && gunicorn -b 0.0.0.0 "app:create_app()" --daemon'
-                        // sshCommand remote: remote, command: 'source venv/bin/activate'
-                        // sshCommand remote: remote, command: 'git pull'
-                        // sshCommand remote: remote, command: 'gunicorn -b 0.0.0.0 "app:create_app()"'
                     }
                 }
             }
