@@ -12,20 +12,21 @@ pipeline {
                         remote.identityFile = identity
                         remote.allowAnyHosts = true
 
-                        // writeFile file: 'kill_bg_gunicorn.sh', text: 'ps aux | grep gunicorn > gunicorn_bg_instances
-                        // if grep -q "daemon" gunicorn_bg_instances
-                        // then
-                        // pkill gunicorn;
-                        // echo "FOUND";
-                        // else
-                        // echo "NOT FOUND";
-                        // fi'
+                        writeFile file: 'kill_bg_gunicorn.sh', text: '''\
+                        ps aux | grep gunicorn > gunicorn_bg_instances
+                        if grep -q "daemon" gunicorn_bg_instances
+                        then
+                            pkill gunicorn;
+                            echo "FOUND";
+                        else
+                            echo "NOT FOUND";
+                        fi'''
 
-                        // sshPut remote: remote, from: 'kill_bg_gunicorn.sh', into: '.'
-                        // sshCommand remote: remote, command: 'chmod +777 kill_bg_gunicorn.ssh'
+                        sshPut remote: remote, from: 'kill_bg_gunicorn.sh', into: '.'
+                        sshCommand remote: remote, command: 'chmod +x kill_bg_gunicorn.ssh'
 
                         sshCommand remote: remote, command: './kill_bg_gunicorn.sh'
-                        sshCommand remote: remote, command: 'cd ~/filmproject && source venv/bin/activate && git pull && gunicorn -b 0.0.0.0 "app:create_app()" --daemon'
+                        sshCommand remote: remote, command: 'pkill gunicorn || cd ~/filmproject && source venv/bin/activate && git pull && gunicorn -b 0.0.0.0 "app:create_app()" --daemon'
                     }
                 }
             }
