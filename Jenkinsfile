@@ -16,12 +16,12 @@ pipeline {
                         sshCommand remote: remote, command: 'ps aux | grep gunicorn > gunicorn_bg_instances'
 
                         writeFile file: 'kill_bg_gunicorn.sh', text: 'if grep -q "daemon" gunicorn_bg_instances
-                                                                      then
-                                                                        pkill gunicorn;
-                                                                        echo "FOUND";
-                                                                      else
-                                                                        echo "NOT FOUND";
-                                                                      fi'
+then
+   pkill gunicorn;
+   echo "FOUND";
+else
+   echo "NOT FOUND";
+fi'
 
                         sshPut remote: remote, from: 'kill_bg_gunicorn.sh', into: '.'
                         sshCommand remote: remote, command: 'chmod +777 kill_bg_gunicorn.ssh'
