@@ -7,8 +7,8 @@ pipeline {
                     scannerHome = tool 'sonarqube-scanner'
                 }
                 withSonarQubeEnv(installationName: 'NM-SonarQube') {
-                    sh '${scannerHome}/bin/sonar-scanner'
                     sh 'ls -la'
+                    sh '${scannerHome}/bin/sonar-scanner'
                 }
             }
         }
