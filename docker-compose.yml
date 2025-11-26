@@ -1,0 +1,29 @@
+services:
+
+  db:
+    build: sakila-mysql-docker/
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "sakila"
+      MYSQL_ROOT_HOST: "%"
+    networks:
+      - default
+    volumes:
+      - db-data:/var/lib/mysql
+
+
+  api:
+    build: .
+    links:
+      - db:db
+    ports:
+      - "8000:8000"
+    networks:
+      - default
+    
+networks:
+  default: {}
+
+volumes:
+  db-data:
